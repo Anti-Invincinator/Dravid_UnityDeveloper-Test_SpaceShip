@@ -1,19 +1,42 @@
 ﻿using UnityEngine;
 
 public class ShipController : MonoBehaviour
-{
-    [Header("Ship Properties")]
-    [Tooltip("Speed of the SpaceShip")]
-    public float speed;
+{   
+    /// <summary>
+    /// This structure contains all the properties of the ship
+    /// </summary>
+    [System.Serializable]
+    public struct ShipProperties
+    {
+        [Header("Ship Properties")]
+        [Tooltip("Speed of the SpaceShip")]
+        public float speed;
 
-    [Tooltip("RotationRate of the SpaceShip; i.e. How fast it rotates")]
-    public float rotationRate;
+        [Tooltip("RotationRate of the SpaceShip; i.e. How fast it rotates")]
+        public float rotationRate;
 
-    [Tooltip("Cooldown between each time the SpaceShip can Shoot")]
-    public float fireRate;
-    
+        [Tooltip("Cooldown between each time the SpaceShip can Shoot")]
+        public float fireRate;
+
+        public ShipProperties(float speed, float rotationRate, float fireRate)
+        {
+            this.speed = speed;
+            this.rotationRate = rotationRate;
+            this.fireRate = fireRate;
+        }
+
+        public ShipProperties (ShipProperties shipProperties)
+        {
+            this.speed = shipProperties.speed;
+            this.rotationRate = shipProperties.rotationRate;
+            this.fireRate = shipProperties.fireRate;
+        }
+    }
+
     //time the previous bullet was shot
     private float prevBullet;
+
+    public ShipProperties shipProperties;
 
     private void Start()
     {
@@ -26,15 +49,15 @@ public class ShipController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            Rotate(rotationRate);
+            Rotate(shipProperties.rotationRate);
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            Rotate(-rotationRate);
+            Rotate(-shipProperties.rotationRate);
         }
 
         if(Input.GetKeyDown(KeyCode.Space) &&
-            Time.time - prevBullet >= fireRate //Fire Rate Check
+            Time.time - prevBullet >= shipProperties.fireRate //Fire Rate Check
             )
         {
             Shoot();
@@ -46,7 +69,7 @@ public class ShipController : MonoBehaviour
     //Makes the ship move constantly towards where it's pointing
     private void Move()
     {
-        transform.position += transform.up * speed * Time.deltaTime;
+        transform.position += transform.up * shipProperties.speed * Time.deltaTime;
     }
 
 
