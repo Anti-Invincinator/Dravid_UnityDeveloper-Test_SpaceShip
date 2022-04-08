@@ -7,9 +7,10 @@ public class PlayerController : MonoBehaviour
     //A Reference to the playerShip
     GameObject playerShip;
     ShipController shipController;
-    void Start()
+
+    private void Awake()
     {
-        
+
     }
 
     private void OnEnable()
@@ -47,18 +48,23 @@ public class PlayerController : MonoBehaviour
 #endif
     }
 
-    void RotateLeft()
+    public void RotateLeft()
     {
         shipController.Rotate(shipController.shipProperties.rotationRate);
     }
 
-    void RotateRight()
+    public void RotateRight()
     {
         shipController.Rotate(-shipController.shipProperties.rotationRate);
     }
 
-    void Shoot()
+    public void Shoot()
     {
         shipController.Shoot();
     } 
+
+    public void ButtonPressed()
+    {
+        Debug.Log("Pressed");
+    }
 }

@@ -8,7 +8,15 @@ public class GameManager : MonoBehaviour
     public ShipController.ShipProperties playerShipProperties;
     public ShipController.ShipProperties enemyShipProperties;
 
+    //The Ship Prefab to Spawn
     public GameObject ShipPrefab;
+
+    //A reference to the PlayerController Instance
+    public PlayerController playerControllerRef;
+
+    private void Awake()
+    {
+    }
 
     private void Update()
     {
@@ -20,6 +28,10 @@ public class GameManager : MonoBehaviour
     {
         SpawnShips();
         ResetUI();
+
+        //A Failsafe to Enable to playerController Script only when the player spaceship is spawned
+        playerControllerRef.gameObject.SetActive(true);
+        
     }
 
     /// <summary>
@@ -32,8 +44,7 @@ public class GameManager : MonoBehaviour
 
         playerShip.gameObject.tag = "Player";
         playerShip.gameObject.name = "Player";
-        playerShip.GetComponent<ShipController>().shipProperties = new ShipController.ShipProperties(playerShipProperties);
-        playerShip.AddComponent<PlayerController>();                                                                           //Adding the Player Controller Class
+        playerShip.GetComponent<ShipController>().shipProperties = new ShipController.ShipProperties(playerShipProperties);                                                                          //Adding the Player Controller Class
 
         enemyShip.gameObject.tag = "Enemy";
         enemyShip.gameObject.name = "Enemy";
