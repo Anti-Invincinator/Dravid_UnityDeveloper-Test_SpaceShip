@@ -1,64 +1,93 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public ShipController.ShipProperties playerShipProperties;
-    public ShipController.ShipProperties enemyShipProperties;
-
-    //The Ship Prefab to Spawn
-    public GameObject ShipPrefab;
-
-    //A reference to the PlayerController Instance
-    public PlayerController playerControllerRef;
-
+    #region Singleton
+    public static GameManager _instance;
     private void Awake()
     {
+        _instance = this;
     }
+    #endregion //!Singleton
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-            ResetGame();
-    }
+
+    [Header("UI Elements")]
+    //This is a reference to the pause screen
+    public GameObject PauseScreen;
+    public GameObject GameOverScreen;
+
+    //Reference to Player and EnemyScore
+    public Text PlayerScoreText;
+    public Text EnemyScoreText;
+
+    public Text GameOverText;
+
+    private int playerScore;
+    private int enemyScore;
+
+    [Tooltip("Score Limit till which the game has to be played")]
+    public int scoreLimit = 10;
 
     private void OnEnable()
     {
-        SpawnShips();
-        ResetUI();
+        ResetUI();     
+    }
 
-        //A Failsafe to Enable to playerController Script only when the player spaceship is spawned
-        playerControllerRef.gameObject.SetActive(true);
-        
+    public void UpdateScore()
+    {
+        PlayerScoreText.text = playerScore.ToString();
+        EnemyScoreText.text = enemyScore.ToString();
+
+        //Check for game over
+        if(playerScore >= scoreLimit)
+        {
+            GameOver("You Win");
+        }
+        else if(enemyScore >= scoreLimit)
+        {
+            GameOver("You Lose");
+        }
+    }
+
+    //Increases and Updates PlayerScore
+    public void IncreasePlayerScore()
+    {
+        playerScore++;
+        UpdateScore();
+    }
+    
+    //Increases and Updates EnemyScore
+    public void IncreaseEnemyScore()
+    {
+        enemyScore++;
+        UpdateScore();
     }
 
     /// <summary>
-    /// This Function Spawns the player and enemy, set it's properties
+    /// Resume the game by setting the timescale back to normal  
     /// </summary>
-    void SpawnShips()
+    public void ResumeGame()
     {
-        var playerShip = Instantiate(ShipPrefab, transform.position, Quaternion.identity);
-        var enemyShip = Instantiate(ShipPrefab, transform.position + new Vector3(2, 0, 0), Quaternion.identity);
-
-        playerShip.gameObject.tag = "Player";
-        playerShip.gameObject.name = "Player";
-        playerShip.GetComponent<ShipController>().shipProperties = new ShipController.ShipProperties(playerShipProperties);                                                                          //Adding the Player Controller Class
-
-        enemyShip.gameObject.tag = "Enemy";
-        enemyShip.gameObject.name = "Enemy";
-        enemyShip.GetComponent<ShipController>().shipProperties = new ShipController.ShipProperties(enemyShipProperties);
+        PauseScreen.gameObject.SetActive(false);
+        Time.timeScale = 1;
     }
 
     /// <summary>
-    /// Resets the Game
+    /// Pauses the Game by setting the timeScale
     /// </summary>
-    void ResetGame()
+    public void Pause()
     {
-        ResetUI();
+        Time.timeScale = 0;
+        PauseScreen.gameObject.SetActive(true);
+    }
 
-        Debug.Log("Go To Main Menu");
+    public void ExitToMainMenu()
+    {
+        Time.timeScale = 1;
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -67,6 +96,21 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void ResetUI()
     {
+        playerScore = 0;
+        enemyScore = 0;
 
+        UpdateScore();
+    }
+
+    /// <summary>
+    /// GameOver UI and Text
+    /// </summary>
+    /// <param name="gameOverText"> Givesout whether we won or lost </param>
+    void GameOver(string gameOverText)
+    {
+        Time.timeScale = 0;
+        GameOverScreen.gameObject.SetActive(true);
+
+        GameOverText.text = gameOverText;
     }
 }

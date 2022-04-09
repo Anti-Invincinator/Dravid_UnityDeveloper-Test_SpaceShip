@@ -1,25 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
-    //A Reference to the playerShip
-    GameObject playerShip;
+    //A Reference to the shipController
     ShipController shipController;
 
+    //Boolean to check whether to rotate Clock or Counter Clockwise
+    bool rotateAntiClockWise;
+    bool rotateClockWise;
+    
     private void Awake()
     {
-
+        shipController = GetComponent<ShipController>();
     }
 
     private void OnEnable()
     {
-        playerShip = GameObject.Find("Player");
-        shipController = playerShip.GetComponent<ShipController>();
+        shipController = GetComponent<ShipController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         MovementControls();
@@ -46,6 +50,12 @@ public class PlayerController : MonoBehaviour
             Shoot();
         }
 #endif
+
+        if (rotateAntiClockWise)
+            RotateLeft();
+
+        if (rotateClockWise)
+            RotateRight();
     }
 
     public void RotateLeft()
@@ -60,11 +70,27 @@ public class PlayerController : MonoBehaviour
 
     public void Shoot()
     {
-        shipController.Shoot();
+        shipController.Shoot("PlayerBullet", Color.white);
     } 
 
-    public void ButtonPressed()
+    public void setRotateClockWise(bool boolean)
     {
-        Debug.Log("Pressed");
+        rotateClockWise = boolean;
+    }
+    
+    public void setRotateAntiClockWise(bool boolean)
+    {
+        rotateAntiClockWise = boolean;
+    }
+
+    //To check for collision
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == "EnemyBullet")
+        {
+            collision.gameObject.SetActive(false);
+
+            GameManager._instance.IncreaseEnemyScore();
+        }
     }
 }

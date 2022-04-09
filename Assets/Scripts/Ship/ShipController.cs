@@ -9,9 +9,6 @@ public class ShipController : MonoBehaviour
     public struct ShipProperties
     {
         [Header("Ship Properties")]
-        [Tooltip("Object Name of the Ship")]
-        public string name;
-
         [Tooltip("Speed of the SpaceShip")]
         public float speed;
 
@@ -22,9 +19,8 @@ public class ShipController : MonoBehaviour
         public float fireRate;
 
         //Parameterized Constructor
-        public ShipProperties(string name, float speed, float rotationRate, float fireRate)
+        public ShipProperties(float speed, float rotationRate, float fireRate)
         {
-            this.name = name;
             this.speed = speed;
             this.rotationRate = rotationRate;
             this.fireRate = fireRate;
@@ -33,7 +29,6 @@ public class ShipController : MonoBehaviour
         //Copy Constructor
         public ShipProperties (ShipProperties shipProperties)
         {
-            this.name = shipProperties.name;
             this.speed = shipProperties.speed;
             this.rotationRate = shipProperties.rotationRate;
             this.fireRate = shipProperties.fireRate;
@@ -42,6 +37,9 @@ public class ShipController : MonoBehaviour
 
     //time the previous bullet was shot
     public float prevBullet;
+
+    //Position to spawn bullet from
+    public Transform bulletSpawn;
 
     public ShipProperties shipProperties;
 
@@ -71,14 +69,24 @@ public class ShipController : MonoBehaviour
     }
 
 
-    //The Shoot function; Draws an instance of bullet from the Object Pooler
-    public void Shoot()
+    /// <summary>
+    /// Spawn and Shoot the bullet
+    /// </summary>
+    /// <param name="tag"> The tag to give to the bullet</param>
+    /// <param name="color">the color to give to the bullet</param>
+    public void Shoot(string tag, Color color)
     {
         if(Time.time - prevBullet >= shipProperties.fireRate) //FireRate Check
         {
-            ObjectPooler._instance.SpawnObject(this.transform.position, this.transform.rotation);
+           var bullet =  ObjectPooler._instance.SpawnObject(bulletSpawn.position, bulletSpawn.rotation);
+
+            bullet.tag = tag;
+
+            bullet.GetComponent<SpriteRenderer>().color = color;
 
             prevBullet = Time.time;
         }       
     }
+
+
 }
