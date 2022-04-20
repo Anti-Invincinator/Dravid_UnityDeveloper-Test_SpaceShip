@@ -859,7 +859,7 @@ PrefabInstance:
     - target: {fileID: 3741719817643168443, guid: b0a7d3f96ffdc5f43a2ded02fbe86df9,
         type: 3}
       propertyPath: shipProperties.fireRate
-      value: 1.5
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3741719817643168443, guid: b0a7d3f96ffdc5f43a2ded02fbe86df9,
         type: 3}

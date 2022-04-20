@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-        ResetUI();     
+        ResetUI();
+        GameData.addTry();
     }
 
     public void UpdateScore()
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour
         if(playerScore >= scoreLimit)
         {
             GameOver("You Win");
+            GameData.addWin();
         }
         else if(enemyScore >= scoreLimit)
         {
@@ -112,5 +114,14 @@ public class GameManager : MonoBehaviour
         GameOverScreen.gameObject.SetActive(true);
 
         GameOverText.text = gameOverText;
+    }
+
+
+    /// <summary>
+    /// Fail safe to save the data even when the game is closed mid-play
+    /// </summary>
+    private void OnApplicationQuit()
+    {
+        GameData.SaveData();
     }
 }
